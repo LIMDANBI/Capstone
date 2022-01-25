@@ -12,6 +12,6 @@ class path_to_img(Dataset):
         return len(self.img_path)
 
     def __getitem__(self, idx):  # 데이터셋에서 특정 샘플을 가져옴
-        image = ImageOps.grayscale(Image.open('.' + self.img_path.iloc[idx]))
+        image = Image.open('.' + self.img_path.iloc[idx])
         image = self.transform(image)
         return image, self.labels.iloc[idx]
