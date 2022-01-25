@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import Dataset
-from PIL import Image, ImageOps
+from PIL import Image
 
 class path_to_img(Dataset):
     def __init__(self, img_path, labels, transform):  # 데이터셋 전처리
