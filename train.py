@@ -32,7 +32,8 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     lr = 0.0001
 
     # 체크포인트 저장 경로
-    checkpoint_dir = '/home/danbibibi/jupyter/checkpoint_dir/'
+    checkpoint_dir = '/home/danbibibi/jupyter/checkpoint_dir/' # gpu 서버
+    # checkpoint_dir = '/Users/dan_bibibi/Downloads/Capstone/checkpoint_dir/' # local
 
     # 학습 재개 시 resume = True, resume_checkpoint='재개할 체크포인트 경로'
     resume = False
@@ -41,6 +42,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     
     # gpu 설정
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(device)
     
     # model 생성
     model = VGG16(input_channel=3, num_class=2350) # 한글 완성형 2350자
@@ -79,16 +81,16 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     # 이미지 변형
     transform = transforms.Compose([
         # transforms.Grayscale(),
-        transforms.Resize((224, 224)),
+        transforms.Resize((32, 32)),
         transforms.ToTensor()
     ])
 
     # 데이터셋 로드
-    train_data = pd.read_csv('./data/hangeul_2350.csv', header=None)
+    train_data = pd.read_csv('./data/hangeul_2350.csv')
 
     # 학습 테스트 데이터 분할
-    train_X = train_data.iloc[:, 0]  # img_path
-    train_y = train_data.iloc[:, 1]  # label
+    train_X = train_data['img_path']  # img_path
+    train_y = train_data['label']  # label
     train_X, val_X, train_y, val_y = train_test_split(train_X, train_y, test_size=val_percent)
 
     # dataset
@@ -140,7 +142,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
                 loss = criterion(out, label)
                 valid_loss = valid_loss + loss.item()
 
-            avg_val_loss = valid_loss / len(valid_loss)
+            avg_val_loss = valid_loss / len(valid_loader)
             val_loss_list.append(avg_val_loss)
             print('validation loss : %f' % (avg_val_loss))
 
@@ -158,7 +160,10 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         torch.save(checkpoint, checkpoint_name)
         print('checkpoint saved : ', checkpoint_name)
 
-        # 학습 그래프 그리기
+    # 모델 저장    
+    torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
+    
+    # 학습 그래프 그리기
     plt.figure()
     plt.subplot(1, 2, 1)
     plt.title("train loss")
