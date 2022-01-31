@@ -103,7 +103,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
 
     # ------------------------------------------
     
-    for epoch in(start_epoch, epoch_num+1): # 에폭 한 번마다 전체 데이터를 봄
+    for epoch in range(start_epoch, epoch_num+1): # 에폭 한 번마다 전체 데이터를 봄
         print('[epoch %d]' % epoch)
 
         train_loss = 0.0
