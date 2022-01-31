@@ -1,6 +1,7 @@
+import os
 import torch
 from torch.utils.data import Dataset
-from PIL import Image
+import PIL.Image as Image
 
 class path_to_img(Dataset):
     def __init__(self, img_path, labels, transform):  # 데이터셋 전처리
@@ -18,6 +19,7 @@ class path_to_img(Dataset):
         return len(self.img_path)
 
     def __getitem__(self, idx):  # 데이터셋에서 특정 샘플을 가져옴
-        image = Image.open('.' + self.img_path.iloc[idx])
+        path = os.path.join("/home/danbibibi/jupyter/data", self.img_path.iloc[idx])
+        image = Image.open(path)
         image = self.transform(image)
         return image, self.char_to_idx[self.labels.iloc[idx]]
