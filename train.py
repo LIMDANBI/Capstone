@@ -8,9 +8,10 @@ from sklearn.model_selection import train_test_split
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from model.vgg import VGG16
+from model.vgg import VGG
 from custom_dataset import path_to_img
 
 if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에만 if문 내의 코드를 돌리라는 의미
@@ -20,13 +21,13 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
 
     # 전체 데이터를 몇 번이나 볼 것인지
     start_epoch = 1
-    epoch_num = 5
+    epoch_num = 10
 
     # 학습 시 한번에 몇 개의 데이터를 볼 것인지
     batch_size = 256
 
     # 검증 데이터 비율
-    val_percent = 0.05
+    val_percent = 0.02
 
     # 학습률
     lr = 0.0001
@@ -45,7 +46,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     print(device)
     
     # model 생성
-    model = VGG16(input_channel=3, num_class=2350) # 한글 완성형 2350자
+    model = VGG(input_channel=3, num_class=2350) # 한글 완성형 2350자
     model.to(device)
 
     # 최적화 기법 및 손실 함수
@@ -80,9 +81,9 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     # ------------------------------------------
     # 이미지 변형
     transform = transforms.Compose([
-        # transforms.Grayscale(),
         transforms.Resize((32, 32)),
         transforms.ToTensor()
+#         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)) # 정규화
     ])
 
     # 데이터셋 로드
@@ -114,7 +115,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         for img, label in train_loader:
             img = img.to(device)
             label = label.to(device)
-
+           
             out = model(img)
 
             # loss 계산
@@ -134,9 +135,9 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         model.eval()
         with torch.no_grad():
             for img, label in valid_loader:
-                img = img.to(device)
+                img = img.to(device) # img = img.float().to(device)
                 label = label.to(device)
-
+                
                 out = model(img)
 
                 loss = criterion(out, label)
@@ -145,6 +146,16 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
             avg_val_loss = valid_loss / len(valid_loader)
             val_loss_list.append(avg_val_loss)
             print('validation loss : %f' % (avg_val_loss))
+            
+            
+            # 최적의 모델 저장
+            if epoch<2:
+                print('first model save...')
+                torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
+            else:
+                if val_loss_list[-1] < val_loss_list[-2]:
+                    print('better model save...')
+                    torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
 
         # 체크포인트 저장
         checkpoint_name = checkpoint_dir + '{:d}_checkpoint.pth'.format(epoch)
@@ -160,8 +171,9 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         torch.save(checkpoint, checkpoint_name)
         print('checkpoint saved : ', checkpoint_name)
 
-    # 모델 저장    
-    torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
+    # 모델 저장
+#     print('model save...')
+#     torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
     
     # 학습 그래프 그리기
     plt.figure()
