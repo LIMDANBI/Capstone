@@ -29,8 +29,8 @@ class VGG(nn.Module):
         )
 
         self.fc = nn.Sequential(
-            nn.Linear(in_features=512*2*2, out_features=2048), nn.ReLU(inplace=True),
-            nn.Dropout(p=0.3, inplace=True),
+            nn.Linear(in_features=512*2*2, out_features=2048),
+            nn.Dropout(p=0.3),
             nn.Linear(in_features=2048, out_features=num_class)
         )
 
@@ -39,5 +39,5 @@ class VGG(nn.Module):
     def forward(self, x):
         conv_out = self.conv(x)
         conv_out = conv_out.view(conv_out.size()[0], -1) # 256, 512*2*2
-        output = self.fc(conv_out)
+        output = self.fc(conv_out) # 256, 2350
         return output
