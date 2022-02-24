@@ -27,11 +27,14 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     batch_size = 256
 
     # 검증 데이터 비율
-    val_percent = 0.02
+    val_percent = 0.05
 
     # 학습률
-    lr = 0.0001
-
+    lr = 0.001
+    
+    # 이미지 크기 조정
+    img_size = 32
+    
     # 체크포인트 저장 경로
     checkpoint_dir = '/home/danbibibi/jupyter/checkpoint_dir/' # gpu 서버
     # checkpoint_dir = '/Users/dan_bibibi/Downloads/Capstone/checkpoint_dir/' # local
@@ -81,7 +84,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     # ------------------------------------------
     # 이미지 변형
     transform = transforms.Compose([
-        transforms.Resize((32, 32)),
+        transforms.Resize((img_size, img_size)),
         transforms.ToTensor()
 #         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)) # 정규화
     ])
@@ -115,7 +118,13 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         for img, label in train_loader:
             img = img.to(device)
             label = label.to(device)
-           
+            
+#             print(img)
+#             print(label)
+#             print(img.shape)
+#             print(label.shape)
+#             break
+                
             out = model(img)
 
             # loss 계산
@@ -135,7 +144,8 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         model.eval()
         with torch.no_grad():
             for img, label in valid_loader:
-                img = img.to(device) # img = img.float().to(device)
+                
+                img = img.to(device)
                 label = label.to(device)
                 
                 out = model(img)
