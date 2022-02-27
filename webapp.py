@@ -44,7 +44,7 @@ def load_model():
     PATH = '/Users/dan_bibibi/Downloads/Capstone/model/handwrite_recognition.pt'
     device = torch.device('cpu')
     model = VGG(input_channel=3, num_class=2350)
-    model.load_state_dict(torch.load(PATH, map_location=device))
+    model.load_state_dict(torch.load(PATH, map_location=device)) # GPU에서 save, CPU에서 load
     return model, list(character)
 
 model, idx2char = load_model()
@@ -52,16 +52,16 @@ model, idx2char = load_model()
 
 st.write('# Handwrite Recognition Test')
 
-CANVAN_SIZE = 256
+CANVAN_SIZE = 192
 
 col1, col2 = st.columns(2)
 
 with col1:
     canvas = st_canvas(
-        fill_color = '#000000', # 바탕화면
-        stroke_width = 10, # 글씨 굵기
-        stroke_color = '#FFFFFF', # 글씨 색상
-        background_color = '#000000',
+        fill_color = '#FFFFFF', # 바탕화면
+        stroke_width = 7, # 글씨 굵기
+        stroke_color = '#000000', # 글씨 색상
+        background_color = '#FFFFFF',
         width = CANVAN_SIZE,
         height = CANVAN_SIZE,
         drawing_mode = 'freedraw',
@@ -81,9 +81,13 @@ if canvas.image_data is not None: # canvas에 data가 있는 경우
     x = x / 255.
     x = torch.Tensor(x)
 
+    print(x.shape)
+
     # 모델 예측
     ouputs = model(x)
-    _, result = torch.max(ouputs, 1)
+    print(ouputs.shape)
+    _, result = ouputs.max(1) # values, indices
+    print(result)
 
     # 결과 출력
     st.write(f' ## Result: {idx2char[result]}')
