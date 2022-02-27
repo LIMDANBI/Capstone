@@ -35,6 +35,9 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     # 이미지 크기 조정
     img_size = 32
     
+    # validation loss가 가장 좋은 model을 저장하기 위해
+    min_loss = 0
+    
     # 체크포인트 저장 경로
     checkpoint_dir = '/home/danbibibi/jupyter/checkpoint_dir/' # gpu 서버
     # checkpoint_dir = '/Users/dan_bibibi/Downloads/Capstone/checkpoint_dir/' # local
@@ -119,12 +122,6 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
             img = img.to(device)
             label = label.to(device)
             
-#             print(img)
-#             print(label)
-#             print(img.shape)
-#             print(label.shape)
-#             break
-                
             out = model(img)
 
             # loss 계산
@@ -160,10 +157,12 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
             
             # 최적의 모델 저장
             if epoch<2:
+                min_loss = val_loss_list[-1]
                 print('first model save...')
                 torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
             else:
-                if val_loss_list[-1] < val_loss_list[-2]:
+                if val_loss_list[-1] < min_loss:
+                    min_loss = val_loss_list[-1]
                     print('better model save...')
                     torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
 
