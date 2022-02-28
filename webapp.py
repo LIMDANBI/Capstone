@@ -2,9 +2,12 @@ import cv2
 import torch
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas # pip install streamlit-drawable-canvas
+import torchvision.transforms as transforms
 import numpy as np
 
+from PIL import Image
 from model.vgg import VGG
+
 
 # @st.cache(allow_output_mutation=True) # 한번만 load (rerun x)
 def load_model():
@@ -45,14 +48,21 @@ def load_model():
     device = torch.device('cpu')
     model = VGG(input_channel=3, num_class=2350)
     model.load_state_dict(torch.load(PATH, map_location=device)) # GPU에서 save, CPU에서 load
-    return model, list(character)
+    return model, character
 
 model, idx2char = load_model()
-
 
 st.write('# Handwrite Recognition Test')
 
 CANVAN_SIZE = 192
+img_size = 32
+
+# 이미지 변형
+transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize((img_size, img_size)),
+    transforms.ToTensor()
+])
 
 col1, col2 = st.columns(2)
 
@@ -74,23 +84,19 @@ if canvas.image_data is not None: # canvas에 data가 있는 경우
     preview_img = cv2.resize(img, (CANVAN_SIZE, CANVAN_SIZE))
     col2.image(preview_img)  # 변환한 이미지 미리 보여주기
 
-    # 이미지 전처리
     x = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # RGB 이미지로 변환
-    x = np.array(x, dtype=np.float32)
-    x = x.reshape((-1, 3, 32, 32))
-    x = x / 255.
-    x = torch.Tensor(x)
-
-    print(x.shape)
+    x = transform(x)
+    x = x.unsqueeze(dim=0)
 
     # 모델 예측
-    ouputs = model(x)
-    print(ouputs.shape)
-    _, result = ouputs.max(1) # values, indices
-    print(result)
+    outputs = model(x)
+    # print(outputs.shape)
+    prob, idx = outputs.max(1) # values, indices
+    # print(prob)
+    # print(idx)
 
     # 결과 출력
-    st.write(f' ## Result: {idx2char[result]}')
+    st.write(f' ## Result: {idx2char[idx]}')
 
     # # 가장 비슷했던 다섯가지 추가로 출력
     # most_arg = y.sort()[::-1][:5]
