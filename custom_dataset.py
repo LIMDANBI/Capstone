@@ -12,10 +12,6 @@ character = '가각간갇갈갉갊감갑값갓갔강갖갗같갚갛개객갠갤�
 syllables = {}
 for i, char in enumerate(character):
     syllables[char] = i # '가' : 0, '나': 1, .... 
-        
-# 임베딩
-embedding_layer = nn.Embedding(num_embeddings=len(syllables), embedding_dim=20)
-embedding_layer.weight.requires_grad = False
 
 class path_to_img(Dataset):
     def __init__(self, img_path, labels, transform):  # 데이터셋 전처리
@@ -30,6 +26,6 @@ class path_to_img(Dataset):
         path = os.path.join("/home/danbibibi/jupyter/data", self.img_path.iloc[idx])
         image = Image.open(path)
         image = self.transform(image)
-        image = torch.where(image > 0.8, 1., 0.) # 이진화
+#         image = torch.where(image > 0.8, 1., 0.) # 이진화
         char2idx = syllables[self.labels.iloc[idx]] # ex) '가' -> 0
-        return image, embedding_layer(torch.LongTensor([char2idx]))[0]
+        return image, char2idx
