@@ -1,4 +1,4 @@
-# AI를 활용한 똑똑한 노트 필기앱 "APlus"
+# AI를 활용한 똑똑한 노트 필기앱 "[APlus](https://github.com/APlus22)"
 
 ## ✅ APlus 배경
 - 최근 아이패드, 갤럭시 탭 등의 태블릿을 학업 용도로 사용하는 학생들이 늘어나면서 다양한 노트 application이 인기를 끌고 있음.
