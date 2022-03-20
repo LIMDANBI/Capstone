@@ -26,6 +26,5 @@ class path_to_img(Dataset):
         path = os.path.join("/home/danbibibi/jupyter/data", self.img_path.iloc[idx])
         image = Image.open(path)
         image = self.transform(image)
-#         image = torch.where(image > 0.8, 1., 0.) # 이진화
         char2idx = syllables[self.labels.iloc[idx]] # ex) '가' -> 0
         return image, char2idx

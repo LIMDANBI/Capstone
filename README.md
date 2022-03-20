@@ -1,4 +1,4 @@
-# AI를 활용한 똑똑한 노트 필기앱 "APlus"
+# AI를 활용한 똑똑한 노트 필기앱 "[APlus](https://github.com/APlus22)"
 
 ## ✅ APlus 배경
 - 최근 아이패드, 갤럭시 탭 등의 태블릿을 학업 용도로 사용하는 학생들이 늘어나면서 다양한 노트 application이 인기를 끌고 있음.
@@ -8,7 +8,7 @@
 <br>
  
 ## ✅ 주기능
-### 1. 자동으로 사용자의 글씨를 텍스트화 (이용할 데이터: [한국어 글자체 이미지](https://aihub.or.kr/aidata/133))
+### 1. 자동으로 사용자의 글씨를 텍스트화 (이용할 데이터: [한국어 글자체 이미지](https://aihub.or.kr/aidata/133), [textGenerator](https://github.com/Belval/TextRecognitionDataGenerator))
 - 사용자의 손 글씨를 자동으로 텍스트화 (원하지 않을 경우 필기 데이터 그대로 보존)
 - 텍스트화 시 사용자가 원하는 폰트 선택 가능 
 - 텍스트화 진행 과정에서 맞춤법을 자동으로 수정

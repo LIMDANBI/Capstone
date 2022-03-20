@@ -106,7 +106,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     valid_datasets = path_to_img(img_path=val_X, labels=val_y, transform=transform)
 
     # DataLoader
-    train_loader = DataLoader(dataset=train_datasets, batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(dataset=train_datasets, batch_size=batch_size, drop_last = True, shuffle=True)
     valid_loader = DataLoader(dataset=valid_datasets, batch_size=batch_size)
 
     # ------------------------------------------
@@ -156,7 +156,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
             print('validation loss : %f' % (avg_val_loss))
             
             
-            # 최적의 모델 저장
+        # 최적의 모델 저장
         if epoch<2:
             min_loss = val_loss_list[-1]
             print('first model save...')
@@ -181,10 +181,6 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         torch.save(checkpoint, checkpoint_name)
         print('checkpoint saved : ', checkpoint_name)
 
-    # 모델 저장
-#     print('model save...')
-#     torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
-    
     # 학습 그래프 그리기
     plt.figure()
     plt.subplot(1, 2, 1)

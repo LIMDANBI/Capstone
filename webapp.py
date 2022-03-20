@@ -1,15 +1,17 @@
 import cv2
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchvision.transforms as transforms
+
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas # pip install streamlit-drawable-canvas
-import torchvision.transforms as transforms
+
 import numpy as np
-
 from PIL import Image
-from model.vgg import VGG
 
+from model.vgg import VGG 
 
-# @st.cache(allow_output_mutation=True) # 한번만 load (rerun x)
 def load_model():
     character = '가각간갇갈갉갊감갑값갓갔강갖갗같갚갛개객갠갤갬갭갯갰갱갸갹갼걀걋걍걔걘걜거걱건걷걸걺검겁것겄겅겆겉겊겋게겐겔겜겝겟겠겡겨격겪견겯결겸겹겻겼경곁계곈' \
                 '곌곕곗고곡곤곧골곪곬곯곰곱곳공곶과곽관괄괆괌괍괏광괘괜괠괩괬괭괴괵괸괼굄굅굇굉교굔굘굡굣구국군굳굴굵굶굻굼굽굿궁궂궈궉권궐궜궝궤궷귀귁귄귈귐귑귓규' \
@@ -44,7 +46,7 @@ def load_model():
                 '퓰퓸퓻퓽프픈플픔픕픗피픽핀필핌핍핏핑하학한할핥함합핫항해핵핸핼햄햅햇했행햐향허헉헌헐헒험헙헛헝헤헥헨헬헴헵헷헹혀혁현혈혐협혓혔형혜혠혤혭호혹혼홀홅' \
                 '홈홉홋홍홑화확환활홧황홰홱홴횃횅회획횐횔횝횟횡효횬횰횹횻후훅훈훌훑훔훗훙훠훤훨훰훵훼훽휀휄휑휘휙휜휠휨휩휫휭휴휵휸휼흄흇흉흐흑흔흖흗흘흙흠흡흣흥흩' \
                 '희흰흴흼흽힁히힉힌힐힘힙힛힝'
-    PATH = '/Users/dan_bibibi/Downloads/Capstone/model/handwrite_recognition.pt'
+    PATH = '/Users/dan_bibibi/Downloads/Capstone/model/handwrite_recognition.pt' # 0.178909
     device = torch.device('cpu')
     model = VGG(input_channel=3, num_class=2350)
     model.load_state_dict(torch.load(PATH, map_location=device)) # GPU에서 save, CPU에서 load
@@ -68,10 +70,10 @@ col1, col2 = st.columns(2)
 
 with col1:
     canvas = st_canvas(
-        fill_color = '#FFFFFF', # 바탕화면
+        fill_color = '#000000', # 바탕화면
         stroke_width = 7, # 글씨 굵기
-        stroke_color = '#000000', # 글씨 색상
-        background_color = '#FFFFFF',
+        stroke_color = '#FFFFFF', # 글씨 색상
+        background_color = '#000000',
         width = CANVAN_SIZE,
         height = CANVAN_SIZE,
         drawing_mode = 'freedraw',
@@ -90,9 +92,11 @@ if canvas.image_data is not None: # canvas에 data가 있는 경우
 
     # 모델 예측
     outputs = model(x)
+    print(outputs)
     # print(outputs.shape)
-    prob, idx = outputs.max(1) # values, indices
-    # print(prob)
+    logit, idx = outputs.max(1) # values, indices
+    prob = F.softmax(logit, dim=0)
+    print(prob)
     # print(idx)
 
     # 결과 출력
