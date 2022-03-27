@@ -22,13 +22,13 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
 
     # 전체 데이터를 몇 번이나 볼 것인지
     start_epoch = 1
-    epoch_num = 25
+    epoch_num = 15
 
     # 학습 시 한번에 몇 개의 데이터를 볼 것인지
     batch_size = 256
 
     # 검증 데이터 비율
-    val_percent = 0.01
+    val_percent = 0.05
 
     # 학습률
     lr = 0.001
@@ -36,55 +36,28 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     # 이미지 크기 조정
     img_size = 32
     
-    # validation loss가 가장 좋은 model을 저장하기 위해
+    # validation loss가 가장 좋은 model을 저장
     min_loss = 0
     
-    # 체크포인트 저장 경로
-    checkpoint_dir = '/home/danbibibi/jupyter/checkpoint_dir/' # gpu 서버
-    # checkpoint_dir = '/Users/dan_bibibi/Downloads/Capstone/checkpoint_dir/' # local
-
-    # 학습 재개 시 resume = True, resume_checkpoint='재개할 체크포인트 경로'
-    resume = False
-    resume_checkpoint = ''
+    # 학습 그래프 출력에 사용
+    train_loss_list = []
+    val_loss_list = []
     # ------------------------------------------
     
     # gpu 설정
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(device)
+    print()
     
     # model 생성
     model = VGG(input_channel=3, num_class=2350) # 한글 완성형 2350자
     model.to(device)
-    torchsummary.summary(model, (3, 32, 32))
+    torchsummary.summary(model, (3, img_size, img_size)) # model 정보 
+    print()
 
     # 최적화 기법 및 손실 함수
     optimizer = optim.Adam(params=model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss() # 다중 분류 (nn.LogSoftmax + nn.NLLLoss)
-
-    train_loss_list = []
-    val_loss_list = []
-    
-    # 디렉토리 생성 ( exist_ok=True, 해당 디렉토리가 없을 경우에만 생성)
-    os.makedirs(checkpoint_dir, exist_ok=True)
-
-    # ------------------------------------------
-    # 이전 체크포인트로부터 모델 로드
-    if resume:
-        print("start model load...")
-
-        # 체크포인트 로드
-        checkpoint = torch.load(resume_checkpoint, map_location=device)
-
-        # 각종 파라미터 로드
-        model.load_state_dict(checkpoint['model'])
-        optimizer.load_state_dict(checkpoint['optimizer'])
-        train_loss_list = checkpoint['train_loss_list']
-        val_loss_list = checkpoint['val_loss_list']
-        start_epoch = checkpoint['epoch'] + 1
-        batch_size = checkpoint['batch_size']
-
-        print("model load end. start epoch : ", start_epoch)
-    # ------------------------------------------
 
     # ------------------------------------------
     # 이미지 변형
@@ -95,6 +68,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
 
     # 데이터셋 로드
     train_data = pd.read_csv('./data/hangeul_2350.csv')
+    train_data = train_data[:593978]
 
     # 학습 테스트 데이터 분할
     train_X = train_data['img_path']  # img_path
@@ -106,7 +80,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
     valid_datasets = path_to_img(img_path=val_X, labels=val_y, transform=transform)
 
     # DataLoader
-    train_loader = DataLoader(dataset=train_datasets, batch_size=batch_size, drop_last = True, shuffle=True)
+    train_loader = DataLoader(dataset=train_datasets, batch_size=batch_size, shuffle=True)
     valid_loader = DataLoader(dataset=valid_datasets, batch_size=batch_size)
 
     # ------------------------------------------
@@ -115,7 +89,12 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
         print('[epoch %d]' % epoch)
 
         train_loss = 0.0
+        train_acc = 0.0
+        train_total = 0
+        
         valid_loss = 0.0
+        valid_acc = 0.0
+        valid_total = 0
 
         # 학습
         model.train()
@@ -124,19 +103,24 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
             label = label.to(device)
             
             out = model(img)
+            _, predicted = torch.max(out, 1) 
 
             # loss 계산
             loss = criterion(out, label)
             train_loss = train_loss + loss.item()
+            train_total += out.size(0) 
+            train_acc += (predicted == label).sum()
 
             # 가중치 갱신
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-
+            
+        train_acc = train_acc / train_total
         avg_train_loss = train_loss / len(train_loader)
         train_loss_list.append(avg_train_loss)
-        print('train loss : %f' % (avg_train_loss))
+        
+        print('train loss : %.4f || train accuracy: %.4f' % (avg_train_loss, train_acc))
 
         # 검증
         model.eval()
@@ -147,13 +131,18 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
                 label = label.to(device)
                 
                 out = model(img)
+                _, predicted = torch.max(out, 1) 
 
                 loss = criterion(out, label)
                 valid_loss = valid_loss + loss.item()
+                valid_total += out.size(0) 
+                valid_acc += (predicted == label).sum()
 
+            valid_acc = valid_acc / valid_total
             avg_val_loss = valid_loss / len(valid_loader)
             val_loss_list.append(avg_val_loss)
-            print('validation loss : %f' % (avg_val_loss))
+    
+            print('valid loss : %.4f || valid accuracy: %.4f' % (avg_val_loss , valid_acc))
             
             
         # 최적의 모델 저장
@@ -166,20 +155,7 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
                 min_loss = val_loss_list[-1]
                 print('better model save...')
                 torch.save(model.state_dict(), '/home/danbibibi/jupyter/model/handwrite_recognition.pt')
-
-        # 체크포인트 저장
-        checkpoint_name = checkpoint_dir + '{:d}_checkpoint.pth'.format(epoch)
-        checkpoint = {
-            'model': model.state_dict(),
-            'optimizer': optimizer.state_dict(),
-            'epoch': epoch,
-            'train_loss_list': train_loss_list,
-            'val_loss_list': val_loss_list,
-            'batch_size': batch_size
-        }
-
-        torch.save(checkpoint, checkpoint_name)
-        print('checkpoint saved : ', checkpoint_name)
+        print()
 
     # 학습 그래프 그리기
     plt.figure()
