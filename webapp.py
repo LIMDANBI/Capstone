@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import cv2
 import torch
 import torch.nn as nn
@@ -48,7 +46,7 @@ def load_model():
                 '퓰퓸퓻퓽프픈플픔픕픗피픽핀필핌핍핏핑하학한할핥함합핫항해핵핸핼햄햅햇했행햐향허헉헌헐헒험헙헛헝헤헥헨헬헴헵헷헹혀혁현혈혐협혓혔형혜혠혤혭호혹혼홀홅' \
                 '홈홉홋홍홑화확환활홧황홰홱홴횃횅회획횐횔횝횟횡효횬횰횹횻후훅훈훌훑훔훗훙훠훤훨훰훵훼훽휀휄휑휘휙휜휠휨휩휫휭휴휵휸휼흄흇흉흐흑흔흖흗흘흙흠흡흣흥흩' \
                 '희흰흴흼흽힁히힉힌힐힘힙힛힝'
-    PATH = '/Users/dan_bibibi/Downloads/Capstone/model/handwrite_recognition.pt' 
+    PATH = '/Users/dan_bibibi/Downloads/Capstone/model/handwrite_recognition.pt' # valid loss : 0.0351 || valid accuracy: 0.9916
     device = torch.device('cpu')
     model = VGG(input_channel=3, num_class=2350)
     model.load_state_dict(torch.load(PATH, map_location=device)) # GPU에서 save, CPU에서 load
@@ -59,12 +57,12 @@ model, idx2char = load_model()
 st.write('# Handwrite Recognition Test')
 
 CANVAN_SIZE = 192
-img_size = 64
+IMG_SIZE = 32
 
 # 이미지 변형
 transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.Resize((img_size, img_size)),
+    transforms.Resize((IMG_SIZE, IMG_SIZE)),
     transforms.ToTensor()
 ])
 
@@ -84,7 +82,7 @@ with col1:
 
 if canvas.image_data is not None: # canvas에 data가 있는 경우
     img = canvas.image_data.astype(np.uint8)
-    img = cv2.resize(img, dsize=(32, 32))  # model input size로 크기 조정
+    img = cv2.resize(img, dsize=(IMG_SIZE, IMG_SIZE))  # model input size로 크기 조정
     preview_img = cv2.resize(img, (CANVAN_SIZE, CANVAN_SIZE))
     col2.image(preview_img)  # 변환한 이미지 미리 보여주기
 
@@ -96,7 +94,7 @@ if canvas.image_data is not None: # canvas에 data가 있는 경우
     outputs = model(x)
     probs = F.softmax(outputs, dim=1)
     prob = probs.max() # 확률 출력
-    logit, idx = outputs.max(1) # values, indices
+    logit, idx = probs.max(1) # values, indices
 
     # 결과 출력
     st.write(f' ## Result: {idx2char[idx]}')
