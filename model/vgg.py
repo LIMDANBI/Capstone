@@ -21,9 +21,9 @@ class VGG(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2), # 4 4 256
 
             # 4 4 512
-            nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, stride=1, padding=1, bias=False), nn.ReLU(),
+            nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, stride=1, padding=1, bias=False),
             nn.BatchNorm2d(num_features=512), nn.ReLU(),
-            nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1, bias=False), nn.ReLU(),
+            nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1, bias=False),
             nn.BatchNorm2d(num_features=512), nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)  # 2 2 512
         )
@@ -34,9 +34,7 @@ class VGG(nn.Module):
             nn.Linear(in_features=2048, out_features=num_class)
         )
 
-        # self.softmax = nn.Softmax(dim=-1)
-
     def forward(self, x):
-        conv_out = self.conv(x)
-        output = self.fc(conv_out) # 256, 2350
-        return output
+        x = self.conv(x)
+        x = self.fc(x) # 256, 2350
+        return x
