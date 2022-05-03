@@ -47,7 +47,7 @@ character = '가각간갇갈갉갊감갑값갓갔강갖갗같갚갛개객갠갤�
             '홈홉홋홍홑화확환활홧황홰홱홴횃횅회획횐횔횝횟횡효횬횰횹횻후훅훈훌훑훔훗훙훠훤훨훰훵훼훽휀휄휑휘휙휜휠휨휩휫휭휴휵휸휼흄흇흉흐흑흔흖흗흘흙흠흡흣흥흩' \
             '희흰흴흼흽힁히힉힌힐힘힙힛힝'
 
-PATH = '/Users/dan_bibibi/Downloads/Capstone/model/0.handwrite_recognition.pt' # valid loss : 0.0351 || valid accuracy: 0.9916
+PATH = '/Users/dan_bibibi/Downloads/Capstone/model/handwrite_recognition.pt' # valid loss : 0.0351 || valid accuracy: 0.9916
 model = VGG(input_channel=3, num_class=2350)
 device = torch.device('cpu')
 model.load_state_dict(torch.load(PATH, map_location=device)) # GPU에서 save, CPU에서 load
@@ -87,20 +87,13 @@ if canvas.image_data is not None: # canvas에 data가 있는 경우
 
     x = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # RGB 이미지로 변환
     x = transform(x)
-    # tf = transforms.ToPILImage()
-    # k = tf(x)
-    # k.save("x.png",'PNG')
     x = x.unsqueeze(dim=0)
 
     # 모델 예측
     outputs = model(x)
-    # print(outputs)
     probs = F.softmax(outputs, dim=1)
-    # print(probs)
     prob = probs.max() # 확률 출력
-    # print(prob)
     logit, idx = probs.max(1) # values, indices
-    # print(idx)
 
     # 결과 출력
     st.write(f' ## Result: {character[idx]}')
