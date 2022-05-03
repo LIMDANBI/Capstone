@@ -68,11 +68,13 @@ if __name__ == '__main__': # 인터프리터에서 직접 실행했을 경우에
 
     # 데이터셋 로드
     train_data = pd.read_csv('./data/hangeul_2350.csv')
-    train_data = train_data[:593978]
+    print('data size is', len(train_data))
+    print()
 
     # 학습 테스트 데이터 분할
     train_X = train_data['img_path']  # img_path
     train_y = train_data['label']  # label
+    
     train_X, val_X, train_y, val_y = train_test_split(train_X, train_y, test_size=val_percent)
 
     # dataset

@@ -16,8 +16,10 @@ class VGG(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2), # 8 8 128
 
             # 8 8 256
-            nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1), nn.ReLU(),
-            nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1), nn.ReLU(),
+            nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(num_features=256), nn.ReLU(),
+            nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(num_features=256), nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2), # 4 4 256
 
             # 4 4 512
@@ -30,7 +32,7 @@ class VGG(nn.Module):
 
         self.fc = nn.Sequential(
             nn.Flatten(),
-            nn.Dropout(p=0.3),
+            nn.Dropout(p=0.5),
             nn.Linear(in_features=2048, out_features=num_class)
         )
 
