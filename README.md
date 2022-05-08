@@ -37,7 +37,19 @@
 <br>
 
 ## ✅ 내가 맡은 부분
-- 손글씨 인식 모델 개발 부분을 맡았다.
+- 손글씨 인식 모델 개발 부분을 맡았다. 
+- test 결과 ㅇ과 ㅁ을 혼돈할 때도 있고, 예측에 실패할 때도 있지만, 꽤 높은 확률로 잘 인식을 하는 것을 확인할 수 있었다.
+
+<div>
+<img src ="https://user-images.githubusercontent.com/55095806/167298672-73a5af6c-7a8e-489d-a727-e249e890d31d.png" width = "250">
+<img src ="https://user-images.githubusercontent.com/55095806/167298675-e717c35b-f87f-461d-9ceb-209a2c17f015.png" width = "250">
+</div>
+
+<div>
+<img src ="https://user-images.githubusercontent.com/55095806/167298678-2bd99a9f-d729-4a8e-b44a-87e4e84fd7f1.png" width = "250">
+<img src ="https://user-images.githubusercontent.com/55095806/167298681-cc0295e8-c726-4aff-b319-cb5ac7f0fa21.png" width = "250">
+<img src ="https://user-images.githubusercontent.com/55095806/167298685-8d000bcb-957d-4b79-be4a-818e67ed3804.png" width = "250">
+ </div>
 
 <br>
  
