@@ -41,6 +41,11 @@
 - 아래 사진은 streamlit을 통해 간단한 테스트 앱을 만들어 테스트를 해본 결과이다.
 - test 결과 ㅇ과 ㅁ을 혼돈할 때도 있고, 예측에 실패할 때도 있지만, 꽤 높은 확률로 잘 인식을 하는 것을 확인할 수 있었다.
 
+### Project run
+```
+npm start
+```
+
 <div>
 <img src ="https://user-images.githubusercontent.com/55095806/167298672-73a5af6c-7a8e-489d-a727-e249e890d31d.png" width = "250">
 <img src ="https://user-images.githubusercontent.com/55095806/167298675-e717c35b-f87f-461d-9ceb-209a2c17f015.png" width = "250">
