@@ -41,9 +41,9 @@
 - 아래 사진은 streamlit을 통해 간단한 테스트 앱을 만들어 테스트를 해본 결과이다.
 - test 결과 ㅇ과 ㅁ을 혼돈할 때도 있고, 예측에 실패할 때도 있지만, 꽤 높은 확률로 잘 인식을 하는 것을 확인할 수 있었다.
 
-### Project run
+**Project run**
 ```
-npm start
+streamlit run webapp.py
 ```
 
 <div>
