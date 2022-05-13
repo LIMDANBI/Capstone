@@ -47,7 +47,7 @@ character = '가각간갇갈갉갊감갑값갓갔강갖갗같갚갛개객갠갤�
             '홈홉홋홍홑화확환활홧황홰홱홴횃횅회획횐횔횝횟횡효횬횰횹횻후훅훈훌훑훔훗훙훠훤훨훰훵훼훽휀휄휑휘휙휜휠휨휩휫휭휴휵휸휼흄흇흉흐흑흔흖흗흘흙흠흡흣흥흩' \
             '희흰흴흼흽힁히힉힌힐힘힙힛힝'
 
-PATH = '/Users/dan_bibibi/Downloads/Capstone/model/handwrite_recognition.pt' # valid loss : 0.0351 || valid accuracy: 0.9916
+PATH = '/Users/dan_bibibi/Downloads/Capstone/model/epoch12.pt' # train loss : 0.0105 || train accuracy: 0.9969 / valid loss : 0.0186 || valid accuracy: 0.9961
 model = VGG(input_channel=3, num_class=2350)
 device = torch.device('cpu')
 model.load_state_dict(torch.load(PATH, map_location=device)) # GPU에서 save, CPU에서 load
@@ -93,6 +93,7 @@ if canvas.image_data is not None: # canvas에 data가 있는 경우
     outputs = model(x)
     probs = F.softmax(outputs, dim=1)
     prob = probs.max() # 확률 출력
+    prob = round(prob.item(),3)
     logit, idx = probs.max(1) # values, indices
 
     # 결과 출력

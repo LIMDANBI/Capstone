@@ -32,7 +32,7 @@ class VGG(nn.Module):
 
         self.fc = nn.Sequential(
             nn.Flatten(),
-            nn.Dropout(p=0.5),
+            nn.Dropout(),
             nn.Linear(in_features=2048, out_features=num_class)
         )
 
