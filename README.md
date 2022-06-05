@@ -60,6 +60,13 @@ streamlit run webapp.py
 <br>
 
 ## ✅ Project 결과물
+
+<br>
+
+직접 테스트 해보기 > https://share.streamlit.io/limdanbi/capstone/main/webapp.py
+
+<br>
+
 <img src ="https://user-images.githubusercontent.com/55095806/171676785-b9a9adc3-7a15-46a0-b9a7-d65833aa7177.png" width = "500">
 
  
