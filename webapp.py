@@ -49,7 +49,7 @@ character = '가각간갇갈갉갊감갑값갓갔강갖갗같갚갛개객갠갤�
             '희흰흴흼흽힁히힉힌힐힘힙힛힝'
 
 path = os.path.dirname(__file__)
-PATH = path + '/handwrite_recognition.pt' # train loss : 0.0105 || train accuracy: 0.9969 / valid loss : 0.0186 || valid accuracy: 0.9961
+PATH = path + '/model/handwrite_recognition.pt' # train loss : 0.0105 || train accuracy: 0.9969 / valid loss : 0.0186 || valid accuracy: 0.9961
 model = VGG(input_channel=3, num_class=2350)
 device = torch.device('cpu')
 model.load_state_dict(torch.load(PATH, map_location=device)) # GPU에서 save, CPU에서 load
