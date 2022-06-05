@@ -72,7 +72,7 @@ col1, col2 = st.columns(2)
 with col1:
     canvas = st_canvas(
         fill_color = '#FFFFFF', # 바탕화면 white
-        stroke_width = 7, # 글씨 굵기
+        stroke_width = 9, # 글씨 굵기
         stroke_color = '#000000', # 글씨 색상 black
         background_color = '#FFFFFF',
         width = CANVAN_SIZE,
